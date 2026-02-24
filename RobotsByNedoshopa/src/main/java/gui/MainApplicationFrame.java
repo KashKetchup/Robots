@@ -17,27 +17,12 @@ import java.awt.event.WindowEvent;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    
+    /**
+     * Конструктор класса
+     */
     public MainApplicationFrame() {
-
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
-        int inset = 50;        
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-            screenSize.width  - inset*2,
-            screenSize.height - inset*2);
-
-        setContentPane(desktopPane);
-        
-        
-        LogWindow logWindow = createLogWindow();
-        addWindow(logWindow);
-
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
-        addWindow(gameWindow);
-
+    	setScreenSize();
+    	generateWindows();
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -51,12 +36,44 @@ public class MainApplicationFrame extends JFrame
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE);
         		if (result == JOptionPane.YES_OPTION) {
-        			System.exit(0);
+        			shutDownFunc();
         		}
-
         	}
         });
     }
+    /**
+     * Завершаем работу приложения
+     */
+    private void shutDownFunc() {
+		this.dispose();
+		System.exit(0);
+    }
+    /**
+     * Устанавливаем размеры окна
+     */
+    private void setScreenSize() {
+        //Make the big window be indented 50 pixels from each edge
+        //of the screen.
+        int inset = 50;        
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setBounds(inset, inset,
+            screenSize.width  - inset*2,
+            screenSize.height - inset*2);
+        setContentPane(desktopPane);
+    }
+    /**
+     * Создаём окна
+     */
+    private void generateWindows() {
+        LogWindow logWindow = createLogWindow();
+        addWindow(logWindow);
+        GameWindow gameWindow = new GameWindow();
+        gameWindow.setSize(400,  400);
+        addWindow(gameWindow);
+    }
+    /**
+     * Функция создания нового окна для Логов
+     */
     protected LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
@@ -67,13 +84,17 @@ public class MainApplicationFrame extends JFrame
         Logger.debug("Протокол работает");
         return logWindow;
     }
-    
+    /**
+     * Функция добавления нового фрейма к desktopPane
+     */
     protected void addWindow(JInternalFrame frame)
     {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-
+    /**
+     * Создаём меню
+     */
     private JMenuBar generateMenuBar()
     {
         JMenuBar menuBar = new JMenuBar();
@@ -82,6 +103,9 @@ public class MainApplicationFrame extends JFrame
         menuBar.add(exitMenuCreator());
         return menuBar;
     }
+    /**
+     * Создаём LookAndFeelMenu 
+     */
     private JMenu createLookAndFeelMenu() {
         
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
@@ -104,6 +128,9 @@ public class MainApplicationFrame extends JFrame
         lookAndFeelMenu.add(crossplatformLookAndFeel);
         return lookAndFeelMenu;
     }
+    /**
+     * Создаём TestMenu  
+     */
     private JMenu createTestMenu() {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
@@ -117,6 +144,9 @@ public class MainApplicationFrame extends JFrame
         testMenu.add(addLogMessageItem);
         return testMenu;
     }
+    /**
+     * Создаём exitMenu 
+     */
     private JMenu exitMenuCreator() {
     	JMenu exitMenu = new JMenu("Завершение Сессии");
     	exitMenu.getAccessibleContext().setAccessibleDescription(
@@ -129,7 +159,9 @@ public class MainApplicationFrame extends JFrame
     	exitMenu.add(exitItem);
     	return exitMenu;
     }
-    
+    /**
+     * Устанавливаем внешний вид приложения 
+     */
     private void setLookAndFeel(String className)
     {
         try
