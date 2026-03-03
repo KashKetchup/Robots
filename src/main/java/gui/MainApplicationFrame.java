@@ -23,23 +23,37 @@ public class MainApplicationFrame extends JFrame
     public MainApplicationFrame() {
     	setScreenSize();
     	generateWindows();
+        setRusButtons();
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
-        		UIManager.put("OptionPane.yesButtonText","Да");
-        		UIManager.put("OptionPane.noButtonText","Нет");
-                int result = JOptionPane.showConfirmDialog(
-                		MainApplicationFrame.this, 
-                        "Вы точно хотите выйти?",
-                        "Сообщение о выходе",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE);
-        		if (result == JOptionPane.YES_OPTION) {
-        			shutDownFunc();
-        		}
+                confrimDialog();
         	}
         });
+    }
+
+    /**
+     * Устанавливаем новый текст для кнопок YES/NO
+     */
+    private void setRusButtons(){
+        UIManager.put("OptionPane.yesButtonText","Да");
+        UIManager.put("OptionPane.noButtonText","Нет");
+    }
+
+    /**
+     * Создаём для пользователя окошко выхода
+     */
+    private void confrimDialog(){
+        int result = JOptionPane.showConfirmDialog(
+                MainApplicationFrame.this,
+                "Вы точно хотите выйти?",
+                "Сообщение о выходе",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+        if (result == JOptionPane.YES_OPTION) {
+            shutDownFunc();
+        }
     }
     /**
      * Завершаем работу приложения
