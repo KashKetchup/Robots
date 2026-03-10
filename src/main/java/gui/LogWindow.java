@@ -7,7 +7,7 @@ import log.LogWindowSource;
 import javax.swing.*;
 import java.awt.*;
 
-public class LogWindow extends JInternalFrame implements LogChangeListener
+public class LogWindow extends JInternalFrame implements LogChangeListener,SaveLoadWindowInfo
 {
     private LogWindowSource logSource;
     private TextArea logContent;
@@ -37,7 +37,13 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
         logContent.setText(content.toString());
         logContent.invalidate();
     }
-    
+    @Override
+    public  LastWindowState saveCurrentState() {
+        return new LastWindowState(getX(),getY(),getHeight(),getWidth(), isIcon());
+    }
+    @Override
+    public void loadLastState(LastWindowState lastWindowState) {
+    }
     @Override
     public void onLogChanged()
     {
