@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 
 import static javax.swing.UIManager.put;
 
+/**
+ * Класс для записи в файл и чтения из него
+ */
 public class FileHandler {
     /**
      * Паттерн для чисел
@@ -89,7 +92,8 @@ public class FileHandler {
      * Конвертировать из LastWindowState в String
      */
     private String convertWindowState(LastWindowState w) {
-        return new String(w.x() + " " + w.y() + " " + w.height() + " " + w.width() + " " + (w.isWindowMinimized() ? 1 : 0));
+        return new String(w.x() + " " + w.y() + " " + w.height() + " "
+                + w.width() + " " + (w.isWindowMinimized() ? 1 : 0));
     }
 }
 

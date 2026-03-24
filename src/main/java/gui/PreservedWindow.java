@@ -1,5 +1,8 @@
 package gui;
 
+/**
+ * Интерфейс для сохраняемых окон
+ */
 public interface PreservedWindow {
     /**
      * Сохранить текущее состояние окна
