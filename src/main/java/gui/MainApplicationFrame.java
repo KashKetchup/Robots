@@ -7,25 +7,48 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
-/**
- * Что требуется сделать:
- * 1. Метод создания меню перегружен функционалом и трудно читается. 
- * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
- */
-public class MainApplicationFrame extends JFrame
+public class MainApplicationFrame extends JFrame implements PreservedWindow
 {
+    /**
+     * Список имен всех окон
+     */
+    private final List<String> windowsNames = new ArrayList<>();
+    /**
+     * Список всех сохраняемых окон
+     */
+    private final List<PreservedWindow> allWindows = new ArrayList<>();
+    /**
+     * Класс для чтения/записи состояний
+     */
+    private final FileHandler fileHandler = new FileHandler();
+    /**
+     * Главная панель
+     */
     private final JDesktopPane desktopPane = new JDesktopPane();
     /**
      * Конструктор класса
      */
-    public MainApplicationFrame() {
+    public MainApplicationFrame() throws IOException {
     	setScreenSize();
-    	generateWindows();
+        LogWindow logWindow = createLogWindow();
+        addWindow(logWindow);
+        GameWindow gameWindow = new GameWindow();
+        gameWindow.setSize(400,  400);
+        addWindow(gameWindow);;
         setRusButtons();
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        windowsNames.add("mFrane");
+        windowsNames.add("logWindow");
+        windowsNames.add("gameWindow");
+        allWindows.add(this);
+        allWindows.add(logWindow);
+        allWindows.add(gameWindow);
+        readStates();
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
                 confrimDialog();
@@ -33,6 +56,32 @@ public class MainApplicationFrame extends JFrame
         });
     }
 
+    /**
+     * Считать состояния из файла
+     */
+    private void readStates(){
+        try{
+            Map<String, LastWindowState>  lastStates = fileHandler.readWindowStates(windowsNames);
+            int i = 0;
+            for(String key: lastStates.keySet()){
+                allWindows.get(i).loadLastState(lastStates.get(key));
+                i++;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Записать состояния в файл
+     */
+    private void recordStates(){
+        Map<String, LastWindowState> windowsStates = new HashMap<>();
+        windowsStates.put("mFrane",allWindows.get(0).saveCurrentState());
+        windowsStates.put("logWindow",allWindows.get(1).saveCurrentState());
+        windowsStates.put("gameWindow",allWindows.get(2).saveCurrentState());
+        fileHandler.writeWindowStates(windowsStates);
+    }
     /**
      * Устанавливаем новый текст для кнопок YES/NO
      */
@@ -52,6 +101,7 @@ public class MainApplicationFrame extends JFrame
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
+            recordStates();
             shutDownFunc();
         }
     }
@@ -76,19 +126,9 @@ public class MainApplicationFrame extends JFrame
         setContentPane(desktopPane);
     }
     /**
-     * Создаём окна
-     */
-    private void generateWindows() {
-        LogWindow logWindow = createLogWindow();
-        addWindow(logWindow);
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
-        addWindow(gameWindow);
-    }
-    /**
      * Функция создания нового окна для Логов
      */
-    protected LogWindow createLogWindow()
+    private LogWindow createLogWindow()
     {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
@@ -96,6 +136,7 @@ public class MainApplicationFrame extends JFrame
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
+
         return logWindow;
     }
     /**
@@ -187,6 +228,25 @@ public class MainApplicationFrame extends JFrame
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             // just ignore
+        }
+    }
+
+    @Override
+    public LastWindowState saveCurrentState() {
+        return new LastWindowState(this.getX(),this.getY(),this.getHeight(),this.getWidth(),
+                (this.getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED);
+    }
+
+    @Override
+    public void loadLastState(LastWindowState lastWindowState) {
+        this.setSize( lastWindowState.width() >= 0 ? lastWindowState.width() : this.getWidth(),
+                lastWindowState.height() >= 0 ? lastWindowState.height() : this.getHeight());
+        this.setLocation(lastWindowState.x() >= 0 ? lastWindowState.x() : this.getX(),
+                lastWindowState.y() >= 0 ? lastWindowState.y() : this.getY());
+        if (lastWindowState.isWindowMinimized()) {
+            this.setExtendedState(JFrame.ICONIFIED);
+        } else {
+            this.setExtendedState(JFrame.NORMAL);
         }
     }
 }

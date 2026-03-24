@@ -1,3 +1,3 @@
 package gui;
 
-public record LastWindowState (int x,int y, int heights, int width, int height, boolean isWindowMinimized){ };
+public record LastWindowState (int x,int y, int height, int width,boolean isWindowMinimized){ };

@@ -2,9 +2,9 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
+import java.beans.PropertyVetoException;
 
-public class GameWindow extends JInternalFrame implements SaveLoadWindowInfo
+public class GameWindow extends JInternalFrame implements PreservedWindow
 {
     private final GameVisualizer gameVisualizer;
 
@@ -25,6 +25,12 @@ public class GameWindow extends JInternalFrame implements SaveLoadWindowInfo
 
     @Override
     public void loadLastState(LastWindowState lastWindowState) {
-
+        this.setSize( lastWindowState.width() >= 0 ? lastWindowState.width() : this.getWidth(),
+                lastWindowState.height() >= 0 ? lastWindowState.height() : this.getHeight());
+        this.setLocation(lastWindowState.x() >= 0 ? lastWindowState.x() : this.getX(),
+                lastWindowState.y() >= 0 ? lastWindowState.y() : this.getY());
+        try {
+            this.setIcon(lastWindowState.isWindowMinimized());
+        } catch (PropertyVetoException e) {}
     }
 }
