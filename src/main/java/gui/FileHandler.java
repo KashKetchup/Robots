@@ -63,7 +63,7 @@ public class FileHandler {
                             String[] tmp = in.split("\\s");
                             result.put(key, new LastWindowState(
                                     toInt(tmp[0]), toInt(tmp[1]), toInt(tmp[2]), toInt(tmp[3]),
-                                    tmp[4] == "1" ? true : false));
+                                    tmp[4].equals("1") ? true : false));
                         } else {
                             result.put(key, new LastWindowState(-1, -1, -1,
                                     -1, false));
