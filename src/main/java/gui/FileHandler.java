@@ -7,26 +7,28 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static javax.swing.UIManager.put;
-
 /**
  * Класс для записи в файл и чтения из него
  */
 public class FileHandler {
     /**
+     * Директория для конфигурационного файла
+     */
+    private final String dir = System.getProperty("user.home") + "/nedoshopa";
+    /**
      * Паттерн для чисел
      */
-    private final Pattern numPattern = Pattern.compile("-?\\d+");
+    private final Pattern windowPattern = Pattern.compile(
+            "(\\D+) (-?\\d+) (-?\\d+) (-?\\d+) (-?\\d+) (-?\\d+)");
 
     /**
      * Записать состояния в файл
      */
-    public void writeWindowStates(Map<String, LastWindowState> windowStates) {
-        String dir = System.getProperty("user.home") + "/nedoshopa";
+    public void writeWindowStates(Collection<PreservedWindow> windows) {
         File file = new File(dir);
         if (!file.exists()) {
             try {
-                file.mkdir();
+                file.mkdirs();
                 Files.createFile(Path.of(dir+"/state.cfg"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -34,10 +36,8 @@ public class FileHandler {
         }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(dir+"/state.cfg"));
-            for (String key : windowStates.keySet()) {
-                LastWindowState curWindowState = windowStates.getOrDefault(key,
-                        new LastWindowState(0, 0, 0, 0, false));
-                writer.write(convertWindowState(curWindowState) + "\n");
+            for (PreservedWindow state : windows) {
+                writer.write(convertWindowState(state.saveCurrentState()) + "\n");
             }
             writer.flush();
         } catch (IOException e) {
@@ -48,30 +48,24 @@ public class FileHandler {
     /**
      * Считать из файла предыдущие состояния
      */
-    public Map<String, LastWindowState> readWindowStates(List<String> keys) throws IOException {
-        String dir = System.getProperty("user.home") + "/nedoshopa/state.cfg";
-        Map<String, LastWindowState> result = new HashMap<>();
-        File file = new File(dir);
-        if (!file.exists()) {
-            for (String key : keys) {
-                result.put(key, new LastWindowState(-1, -1, -1, -1, false));
-            }
-        } else {
+    public List<LastWindowState> readWindowStates() throws IOException {
+        String fileDir = dir+"/state.cfg";
+        List<LastWindowState> result = new ArrayList<>();
+        File file = new File(fileDir);
+        if(file.exists()) {
             try {
-                BufferedReader bufferedReader = new BufferedReader(new FileReader(dir));
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(fileDir));
                 if (file.exists()) {
-                    for (String key : keys) {
                         String in = bufferedReader.readLine();
-                        if (in != null) {
-                            String[] tmp = in.split("\\s");
-                            result.put(key, new LastWindowState(
-                                    toInt(tmp[0]), toInt(tmp[1]), toInt(tmp[2]), toInt(tmp[3]),
-                                    tmp[4].equals("1") ? true : false));
-                        } else {
-                            result.put(key, new LastWindowState(-1, -1, -1,
-                                    -1, false));
+                        while (in != null) {
+                            Matcher m = windowPattern.matcher(in);
+                            if(m.find()){
+                                result.add(new LastWindowState(m.group(1),toInt(m.group(2)),
+                                        toInt(m.group(3)),toInt(m.group(4)),toInt(m.group(5)),
+                                        m.group(6).equals("1") ? true : false ));
+                            }
+                            in = bufferedReader.readLine();
                         }
-                    }
                 }
             } catch (IOException e) {
                 throw new IOException(
@@ -92,7 +86,7 @@ public class FileHandler {
      * Конвертировать из LastWindowState в String
      */
     private String convertWindowState(LastWindowState w) {
-        return new String(w.x() + " " + w.y() + " " + w.height() + " "
+        return new String(w.windowName()+" "+w.x() + " " + w.y() + " " + w.height() + " "
                 + w.width() + " " + (w.isWindowMinimized() ? 1 : 0));
     }
 }

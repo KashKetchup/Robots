@@ -37,7 +37,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Pres
 
     @Override
     public LastWindowState saveCurrentState() {
-        return new LastWindowState(getX(), getY(), getHeight(), getWidth(), isIcon());
+        return new LastWindowState(getName(),getX(), getY(), getHeight(), getWidth(), isIcon());
     }
 
     @Override

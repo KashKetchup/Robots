@@ -12,15 +12,10 @@ import java.util.*;
 import java.util.List;
 
 public class MainApplicationFrame extends JFrame implements PreservedWindow
-{
-    /**
-     * Список имен всех окон
-     */
-    private final List<String> windowsNames = new ArrayList<>();
-    /**
-     * Список всех сохраняемых окон
-     */
-    private final List<PreservedWindow> allWindows = new ArrayList<>();
+{   /**
+    * Словарь для Сохраняемых окон
+    */
+    private final Map<String,PreservedWindow> preservedWindows =  new HashMap<>();
     /**
      * Класс для чтения/записи состояний
      */
@@ -36,18 +31,16 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
     	setScreenSize();
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
+        logWindow.setName("logWindow");
         GameWindow gameWindow = new GameWindow();
         gameWindow.setSize(400,  400);
-        addWindow(gameWindow);;
+        gameWindow.setName("gameWindow");
+        addWindow(gameWindow);
+        this.setName("mainFrame");
         setRusButtons();
+        readWindows();
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        windowsNames.add("mFrane");
-        windowsNames.add("logWindow");
-        windowsNames.add("gameWindow");
-        allWindows.add(this);
-        allWindows.add(logWindow);
-        allWindows.add(gameWindow);
         readStates();
         addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent e) {
@@ -57,15 +50,28 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
     }
 
     /**
+     * Записываем все окна из MainFrame
+     */
+    private void readWindows(){
+        JInternalFrame[] allFrames = desktopPane.getAllFrames();
+        for(JInternalFrame frame : allFrames){
+            if(frame instanceof PreservedWindow newFrame) {
+                preservedWindows.put(frame.getName(), newFrame);
+            }
+        }
+        preservedWindows.put(this.getName(), this);
+    }
+    /**
      * Считать состояния из файла
      */
     private void readStates(){
         try{
-            Map<String, LastWindowState>  lastStates = fileHandler.readWindowStates(windowsNames);
+            List<LastWindowState> windowStates = fileHandler.readWindowStates();
             int i = 0;
-            for(String key: lastStates.keySet()){
-                allWindows.get(i).loadLastState(lastStates.get(key));
-                i++;
+            for(LastWindowState state : windowStates ){
+                if(preservedWindows.containsKey(state.windowName())){
+                    preservedWindows.get(state.windowName()).loadLastState(state);
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -76,11 +82,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Записать состояния в файл
      */
     private void recordStates(){
-        Map<String, LastWindowState> windowsStates = new HashMap<>();
-        windowsStates.put("mFrane",allWindows.get(0).saveCurrentState());
-        windowsStates.put("logWindow",allWindows.get(1).saveCurrentState());
-        windowsStates.put("gameWindow",allWindows.get(2).saveCurrentState());
-        fileHandler.writeWindowStates(windowsStates);
+        fileHandler.writeWindowStates(preservedWindows.values());
     }
     /**
      * Устанавливаем новый текст для кнопок YES/NO
@@ -233,7 +235,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
 
     @Override
     public LastWindowState saveCurrentState() {
-        return new LastWindowState(this.getX(),this.getY(),this.getHeight(),this.getWidth(),
+        return new LastWindowState(this.getName(),this.getX(),this.getY(),this.getHeight(),this.getWidth(),
                 (this.getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED);
     }
 

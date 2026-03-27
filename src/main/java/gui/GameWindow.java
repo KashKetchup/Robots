@@ -20,7 +20,7 @@ public class GameWindow extends JInternalFrame implements PreservedWindow
 
     @Override
     public  LastWindowState saveCurrentState() {
-     return new LastWindowState(getX(),getY(),getHeight(),getWidth(), isIcon());
+     return new LastWindowState(getName(),getX(),getY(),getHeight(),getWidth(), isIcon());
     }
 
     @Override
