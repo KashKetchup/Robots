@@ -3,7 +3,13 @@ package gui;
 import javax.swing.*;
 import java.beans.PropertyVetoException;
 
+/**
+ * Класс для загрузки и сохранения состояния окна
+ */
 public class StateConverter {
+    /**
+     *Сохранение состояние окна
+     */
     public LastWindowState saveState(PreservedWindow window){
         if(window instanceof JInternalFrame w){
             return new LastWindowState(w.getName(),
@@ -11,6 +17,10 @@ public class StateConverter {
         }
         return new LastWindowState("",-1,-1,-1,-1,false);
     }
+
+    /**
+     * Загрузить состояние ока
+     */
     public void loadState(PreservedWindow window, LastWindowState lastWindowState){
         if(window instanceof JInternalFrame w){
             w.setSize( lastWindowState.width() >= 0 ? lastWindowState.width() : w.getWidth(),
