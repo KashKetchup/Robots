@@ -19,7 +19,7 @@
                         <manifest>
                             <!--  Делаем jar исполняемым,
                                                              для этого указываем класс для запуска  -->
-                            <mainClass>gui.RobotsProgram</mainClass>
+                            <mainClass>mvc.RobotsProgram</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

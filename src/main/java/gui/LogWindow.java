@@ -11,6 +11,9 @@ import java.beans.PropertyVetoException;
 public class LogWindow extends JInternalFrame implements LogChangeListener, PreservedWindow {
     private LogWindowSource logSource;
     private TextArea logContent;
+    /**
+     * Конвертер для состояния окна
+     */
     private final StateConverter stateConverter = new StateConverter();
     public LogWindow(LogWindowSource logSource) {
         super("Протокол работы", true, true, true, true);

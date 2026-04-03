@@ -7,6 +7,9 @@ import java.beans.PropertyVetoException;
 public class GameWindow extends JInternalFrame implements PreservedWindow
 {
     private final GameVisualizer gameVisualizer;
+    /**
+     * Конвертер для состояния окна
+     */
     private final StateConverter stateConverter = new StateConverter();
     public GameWindow() 
     {
