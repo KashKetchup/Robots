@@ -1,6 +1,4 @@
-package mvc;
-
-import gui.MainApplicationFrame;
+package gui;
 
 import java.awt.Frame;
 import java.io.IOException;

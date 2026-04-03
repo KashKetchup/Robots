@@ -19,7 +19,7 @@ public class StateConverter {
     }
 
     /**
-     * Загрузить состояние ока
+     * Загрузка в окно его состояние до закрытия
      */
     public void loadState(PreservedWindow window, LastWindowState lastWindowState){
         if(window instanceof JInternalFrame w){
