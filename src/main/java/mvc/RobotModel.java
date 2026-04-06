@@ -33,6 +33,8 @@ public class RobotModel {
      */
     public RobotModel()
     {
+        RobotData old = new RobotData(robotDirection,robotPositionX,robotPositionY,targetPositionX,targetPositionY);
+        sendData(old);
         timer.schedule(new TimerTask()
         {
             @Override
@@ -73,7 +75,7 @@ public class RobotModel {
                     targetPositionX, targetPositionY);
 
             double angularVelocity = (isTurnToRight(angleToTarget) ? -1 : 1) * MAX_ANGULAR_VELOCITY;
-            moveRobot(velocity, angularVelocity, 100);
+            moveRobot(velocity, angularVelocity, 20);
         }
     }
 
@@ -93,7 +95,8 @@ public class RobotModel {
      */
     private void moveRobot(double velocity, double angularVelocity, double duration)
     {
-        RobotData stupidData = new RobotData(robotDirection,robotPositionX,robotPositionY,targetPositionX,targetPositionY);
+        RobotData stupidData = new RobotData(robotDirection,robotPositionX,robotPositionY,
+                targetPositionX,targetPositionY);
         velocity = applyLimits(velocity, 0, MAX_VELOCITY);
         angularVelocity = applyLimits(angularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
         double newX = robotPositionX + velocity / angularVelocity *

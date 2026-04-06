@@ -27,8 +27,9 @@ public class RobotWindow extends JInternalFrame implements PreservedWindow, Prop
      */
     public RobotWindow() {
         super("Актуальная информация о роботе", true, true, true, true);
+        setName("robotWindow");
         this.infoContent = new TextArea("");
-        this.infoContent.setSize(500, 300);
+        this.infoContent.setSize(250, 150);
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(infoContent, BorderLayout.CENTER);
@@ -49,7 +50,6 @@ public class RobotWindow extends JInternalFrame implements PreservedWindow, Prop
 
     @Override
     public void propertyChange(PropertyChangeEvent e) {
-
         if(e.getNewValue() instanceof RobotData newData){
             StringBuilder content = new StringBuilder();
             RobotData old = (RobotData)e.getOldValue();

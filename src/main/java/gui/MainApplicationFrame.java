@@ -30,9 +30,12 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Конструктор класса
      */
     public MainApplicationFrame() throws IOException {
-        RobotModel robotModel = new RobotModel();
     	setScreenSize();
         LogWindow logWindow = createLogWindow();
+        RobotWindow robotWindow = new RobotWindow();
+        RobotModel robotModel = new RobotModel();
+        robotModel.addPropertyChangeListener(robotWindow);
+        addWindow(robotWindow);
         addWindow(logWindow);
         logWindow.setName("logWindow");
         GameWindow gameWindow = new GameWindow(robotModel);
