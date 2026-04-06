@@ -1,5 +1,7 @@
 package gui;
 
+import mvc.RobotController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -10,14 +12,6 @@ import java.util.TimerTask;
 
 public class GameVisualizer extends JPanel
 {
-    private final Timer timer = initTimer();
-    
-    private static Timer initTimer() 
-    {
-        Timer timer = new Timer("events generator", true);
-        return timer;
-    }
-    
     private volatile double robotPositionX = 100;
     private volatile double robotPositionY = 100; 
     private volatile double robotDirection = 0; 
@@ -30,22 +24,6 @@ public class GameVisualizer extends JPanel
     
     public GameVisualizer() 
     {
-        timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                onRedrawEvent();
-            }
-        }, 0, 50);
-        timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                onModelUpdateEvent();
-            }
-        }, 0, 10);
         addMouseListener(new MouseAdapter()
         {
             @Override
@@ -86,28 +64,23 @@ public class GameVisualizer extends JPanel
     
     protected void onModelUpdateEvent()
     {
-        double distance = distance(targetPositionX, targetPositionY, 
-            robotPositionX, robotPositionY);
-        if (distance < 0.5)
-        {
-            return;
+        if (distance(targetPositionX, targetPositionY, robotPositionX, robotPositionY) > 1) {
+            double velocity = MAX_VELOCITY;
+            double angleToTarget = angleTo(robotPositionX, robotPositionY,
+                    targetPositionX, targetPositionY);
+
+            double angularVelocity = (isTurnToRight(angleToTarget) ? -1 : 1)
+                    * 0.001;
+            moveRobot(velocity, angularVelocity, 20);
         }
-        double velocity = MAX_VELOCITY;
-        double angleToTarget = angleTo(robotPositionX, robotPositionY,
-                targetPositionX, targetPositionY);
-        double angularVelocity = 0;
-        if (angleToTarget > robotDirection)
-        {
-            angularVelocity = MAX_ANGULAR_VELOCITY;
-        }
-        if (angleToTarget < robotDirection)
-        {
-            angularVelocity = -MAX_ANGULAR_VELOCITY;
-        }
-        
-        moveRobot(velocity, angularVelocity, 10);
     }
-    
+    public boolean isTurnToRight(double angle){
+        if (robotDirection >= 0 && robotDirection < Math.PI) {
+            return angle < robotDirection || angle > Math.PI + robotDirection;
+        } else {
+            return angle < robotDirection && angle > robotDirection - Math.PI;
+        }
+    }
     private static double applyLimits(double value, double min, double max)
     {
         if (value < min)
