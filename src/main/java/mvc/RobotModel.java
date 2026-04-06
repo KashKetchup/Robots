@@ -1,5 +1,6 @@
 package mvc;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Timer;
@@ -50,16 +51,14 @@ public class RobotModel {
                 robotPositionY,targetPositionX,targetPositionY);
         propertyChangeSupport.firePropertyChange("RobotData",oldValue,newValue);
     }
-
     private void onModelUpdate() {
         if (distance(targetPositionX, targetPositionY, robotPositionX, robotPositionY) > 1) {
             double velocity = MAX_VELOCITY;
             double angleToTarget = angleTo(robotPositionX, robotPositionY,
                     targetPositionX, targetPositionY);
 
-            double angularVelocity = (isTurnToRight(angleToTarget) ? -1 : 1)
-                    * MAX_ANGULAR_VELOCITY;
-            moveRobot(velocity, angularVelocity, 20);
+            double angularVelocity = (isTurnToRight(angleToTarget) ? -1 : 1)*1000;
+            moveRobot(velocity, angularVelocity, 100);
         }
     }
     private static double angleTo(double fromX, double fromY, double toX, double toY)
@@ -71,6 +70,7 @@ public class RobotModel {
     }
     private void moveRobot(double velocity, double angularVelocity, double duration)
     {
+        RobotData stupidData = new RobotData(robotDirection,robotPositionX,robotPositionY,targetPositionX,targetPositionY);
         velocity = applyLimits(velocity, 0, MAX_VELOCITY);
         angularVelocity = applyLimits(angularVelocity, -MAX_ANGULAR_VELOCITY, MAX_ANGULAR_VELOCITY);
         double newX = robotPositionX + velocity / angularVelocity *
@@ -91,6 +91,8 @@ public class RobotModel {
         robotPositionY = newY;
         double newDirection = asNormalizedRadians(robotDirection + angularVelocity * duration);
         robotDirection = newDirection;
+
+        sendData(stupidData);
     }
     public boolean isTurnToRight(double angle){
         if (robotDirection >= 0 && robotDirection < Math.PI) {

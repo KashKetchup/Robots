@@ -1,6 +1,8 @@
 package gui;
 
 import log.Logger;
+import mvc.RobotController;
+import mvc.RobotModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,11 +30,12 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Конструктор класса
      */
     public MainApplicationFrame() throws IOException {
+        RobotModel robotModel = new RobotModel();
     	setScreenSize();
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
         logWindow.setName("logWindow");
-        GameWindow gameWindow = new GameWindow();
+        GameWindow gameWindow = new GameWindow(robotModel);
         gameWindow.setSize(400,  400);
         gameWindow.setName("gameWindow");
         addWindow(gameWindow);
