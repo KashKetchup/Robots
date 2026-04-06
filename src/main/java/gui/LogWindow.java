@@ -45,6 +45,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Pres
 
     @Override
     public void loadLastState(LastWindowState lastWindowState) {
+
         stateConverter.loadState(this, lastWindowState);
     }
 

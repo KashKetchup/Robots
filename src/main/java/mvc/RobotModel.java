@@ -8,7 +8,9 @@ import java.util.TimerTask;
 
 public class RobotModel {
     private final Timer timer = initTimer();
-
+    /**
+     * Вспомогательный класс для упрощённой регистрации и оповещения слушателей
+     */
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private static Timer initTimer()
     {
@@ -26,6 +28,9 @@ public class RobotModel {
     private static final double MAX_VELOCITY = 0.1;
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
 
+    /**
+     * Коснтруктор
+     */
     public RobotModel()
     {
         timer.schedule(new TimerTask()
@@ -39,6 +44,9 @@ public class RobotModel {
 
     }
 
+    /**
+     * Добавить слушателя
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
         RobotData oldValue = new RobotData(robotDirection,robotPositionX,
@@ -46,21 +54,32 @@ public class RobotModel {
         sendData(oldValue);
     }
 
+    /**
+     * Оповестить пользователей
+     */
     private void sendData(RobotData oldValue) {
         RobotData newValue = new RobotData(robotDirection,robotPositionX,
                 robotPositionY,targetPositionX,targetPositionY);
         propertyChangeSupport.firePropertyChange("RobotData",oldValue,newValue);
     }
+
+    /**
+     * Обновить состояние модели
+     */
     private void onModelUpdate() {
         if (distance(targetPositionX, targetPositionY, robotPositionX, robotPositionY) > 1) {
             double velocity = MAX_VELOCITY;
             double angleToTarget = angleTo(robotPositionX, robotPositionY,
                     targetPositionX, targetPositionY);
 
-            double angularVelocity = (isTurnToRight(angleToTarget) ? -1 : 1)*1000;
+            double angularVelocity = (isTurnToRight(angleToTarget) ? -1 : 1) * MAX_ANGULAR_VELOCITY;
             moveRobot(velocity, angularVelocity, 100);
         }
     }
+
+    /**
+     * Вычислить угол
+     */
     private static double angleTo(double fromX, double fromY, double toX, double toY)
     {
         double diffX = toX - fromX;
@@ -68,6 +87,10 @@ public class RobotModel {
 
         return asNormalizedRadians(Math.atan2(diffY, diffX));
     }
+
+    /**
+     * Движение модели
+     */
     private void moveRobot(double velocity, double angularVelocity, double duration)
     {
         RobotData stupidData = new RobotData(robotDirection,robotPositionX,robotPositionY,targetPositionX,targetPositionY);
@@ -94,6 +117,10 @@ public class RobotModel {
 
         sendData(stupidData);
     }
+
+    /**
+     * Проверка на поворот направо
+     */
     public boolean isTurnToRight(double angle){
         if (robotDirection >= 0 && robotDirection < Math.PI) {
             return angle < robotDirection || angle > Math.PI + robotDirection;
@@ -101,6 +128,10 @@ public class RobotModel {
             return angle < robotDirection && angle > robotDirection - Math.PI;
         }
     }
+
+    /**
+     * Находится ли значение в допустимых пределах
+     */
     private static double applyLimits(double value, double min, double max)
     {
         if (value < min)
@@ -109,6 +140,10 @@ public class RobotModel {
             return max;
         return value;
     }
+
+    /**
+     * Перевод в радианы
+     */
     private static double asNormalizedRadians(double angle)
     {
         while (angle < 0)
@@ -122,6 +157,9 @@ public class RobotModel {
         return angle;
     }
 
+    /**
+     * Вычисление дистанции
+     */
     private static double distance(double x1, double y1, double x2, double y2)
     {
         double diffX = x1 - x2;
@@ -129,6 +167,9 @@ public class RobotModel {
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
+    /**
+     * Изменить координаты цели
+     */
     public void changeTarget(int x, int y) {
         targetPositionX = x;
         targetPositionY = y;
