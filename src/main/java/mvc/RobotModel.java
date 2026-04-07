@@ -28,6 +28,7 @@ public class RobotModel {
     private static final double MAX_VELOCITY = 0.1;
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
 
+
     /**
      * Коснтруктор
      */
@@ -56,6 +57,12 @@ public class RobotModel {
         sendData(oldValue);
     }
 
+    /**
+     * Удаление слушателя
+     */
+    public void removePropertyChangeListener(PropertyChangeListener listener){
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
     /**
      * Оповестить пользователей
      */
