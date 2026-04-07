@@ -14,7 +14,13 @@ import java.beans.PropertyChangeListener;
 
 public class GameVisualizer extends JPanel implements PropertyChangeListener
 {
+    /**
+     * Объект, который хранит в себе данные о модели
+     */
     private RobotData currentData = new RobotData(0,100,100,150,100);
+    /**
+     * контроллер
+     */
     private final RobotController controller;
     public GameVisualizer(RobotController robotController)
     {

@@ -6,31 +6,62 @@ import java.beans.PropertyChangeSupport;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Модель
+ */
 public class RobotModel {
+    /**
+     * Таймер
+     */
     private final Timer timer = initTimer();
     /**
      * Вспомогательный класс для упрощённой регистрации и оповещения слушателей
      */
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    /**
+     * Инициализируем таймер
+     */
     private static Timer initTimer()
     {
         Timer timer = new Timer("events generator", true);
         return timer;
     }
 
+    /**
+     * Координата робота Х
+     */
     private volatile double robotPositionX = 100;
+
+    /**
+     * Координата робота У
+     */
     private volatile double robotPositionY = 100;
+
+    /**
+     * Направление робота
+     */
     private volatile double robotDirection = 0;
-
+    /**
+     * Координата цели Х
+     */
     private volatile int targetPositionX = 150;
+    /**
+     * Координата цели У
+     */
     private volatile int targetPositionY = 100;
-
+    /**
+     * Максимальная скорость
+     */
     private static final double MAX_VELOCITY = 0.1;
+    /***
+     * Максимальная угловая скорость
+     */
     private static final double MAX_ANGULAR_VELOCITY = 0.001;
 
 
     /**
-     * Коснтруктор
+     * Конструктор
      */
     public RobotModel()
     {
