@@ -10,24 +10,11 @@ import java.util.TimerTask;
  * Модель
  */
 public class RobotModel {
-    /**
-     * Таймер
-     */
-    private final Timer timer = initTimer();
+
     /**
      * Вспомогательный класс для упрощённой регистрации и оповещения слушателей
      */
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
-
-    /**
-     * Инициализируем таймер
-     */
-    private static Timer initTimer()
-    {
-        Timer timer = new Timer("events generator", true);
-        return timer;
-    }
-
     /**
      * Координата робота Х
      */
@@ -67,14 +54,6 @@ public class RobotModel {
     {
         RobotData old = new RobotData(robotDirection,robotPositionX,robotPositionY,targetPositionX,targetPositionY);
         sendData(old);
-        timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                onModelUpdate();
-            }
-        }, 0, 10);
 
     }
 
@@ -106,7 +85,7 @@ public class RobotModel {
     /**
      * Обновить состояние модели
      */
-    private void onModelUpdate() {
+    protected void onModelUpdate() {
         if (distance(targetPositionX, targetPositionY, robotPositionX, robotPositionY) > 1) {
             double velocity = MAX_VELOCITY;
             double angleToTarget = angleTo(robotPositionX, robotPositionY,
