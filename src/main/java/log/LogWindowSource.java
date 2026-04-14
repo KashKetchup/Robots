@@ -2,6 +2,7 @@ package log;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Queue;
 
 /**
  * Что починить:
@@ -16,14 +17,14 @@ public class LogWindowSource
 {
     private int queueLength;
     
-    private ArrayList<LogEntry> messages;
+    private QueueLog messages;
     private final ArrayList<LogChangeListener> listeners;
     private volatile LogChangeListener[] activeListeners;
     
     public LogWindowSource(int iQueueLength) 
     {
         queueLength = iQueueLength;
-        messages = new ArrayList<>(iQueueLength);
+        messages = new QueueLog(iQueueLength);
         listeners = new ArrayList<>();
     }
     
@@ -48,7 +49,7 @@ public class LogWindowSource
     public void append(LogLevel logLevel, String strMessage)
     {
         LogEntry entry = new LogEntry(logLevel, strMessage);
-        messages.add(entry);
+        messages.addNewNode(entry);
         LogChangeListener [] activeListeners = this.activeListeners;
         if (activeListeners == null)
         {
@@ -69,17 +70,17 @@ public class LogWindowSource
     
     public int size()
     {
-        return messages.size();
+        return messages.getSize();
     }
 
     public Iterable<LogEntry> range(int startFrom, int count)
     {
-        if (startFrom < 0 || startFrom >= messages.size())
+        if (startFrom < 0 || startFrom >= messages.getSize())
         {
             return Collections.emptyList();
         }
-        int indexTo = Math.min(startFrom + count, messages.size());
-        return messages.subList(startFrom, indexTo);
+        int indexTo = Math.min(startFrom + count, messages.getSize());
+        return messages.getSubList(startFrom, indexTo);
     }
 
     public Iterable<LogEntry> all()

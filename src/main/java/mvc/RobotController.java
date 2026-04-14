@@ -1,5 +1,7 @@
 package mvc;
 
+import log.Logger;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Timer;
@@ -46,6 +48,8 @@ public class RobotController {
      * Установить цель
      */
      public void setTarget(int x, int y){
-        model.changeTarget(x,y);
+
+         model.changeTarget(x,y);
+         Logger.sendInfo("Новая цель: x = " + Integer.toString(x) + "; y =" + Integer.toString(y));
      }
 }
