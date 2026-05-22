@@ -1,5 +1,6 @@
 package gui;
 
+import localizator.Localizator;
 import log.Logger;
 import mvc.RobotController;
 import mvc.RobotModel;
@@ -14,18 +15,27 @@ import java.util.*;
 import java.util.List;
 
 public class MainApplicationFrame extends JFrame implements PreservedWindow
-{   /**
+{
+    /**
+     * Экземпляр локализатора
+     */
+    private final static Localizator localizator = Localizator.getInstance();
+
+    /**
     * Словарь для Сохраняемых окон
     */
     private final Map<String,PreservedWindow> preservedWindows =  new HashMap<>();
+
     /**
      * Класс для чтения/записи состояний
      */
     private final FileHandler fileHandler = new FileHandler();
+
     /**
      * Главная панель
      */
     private final JDesktopPane desktopPane = new JDesktopPane();
+
     /**
      * Конструктор класса
      */
@@ -94,8 +104,8 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Устанавливаем новый текст для кнопок YES/NO
      */
     private void setRusButtons(){
-        UIManager.put("OptionPane.yesButtonText","Да");
-        UIManager.put("OptionPane.noButtonText","Нет");
+        UIManager.put("OptionPane.yesButtonText",localizator.getString("button.yes"));
+        UIManager.put("OptionPane.noButtonText",localizator.getString("button.no"));
     }
 
     /**
@@ -104,8 +114,8 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
     private void confrimDialog(){
         int result = JOptionPane.showConfirmDialog(
                 MainApplicationFrame.this,
-                "Вы точно хотите выйти?",
-                "Сообщение о выходе",
+                 localizator.getString("dialog.confrim.exit"),
+                localizator.getString("dialog.exit"),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
@@ -143,7 +153,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug(localizator.getString("log.isworking"));
 
         return logWindow;
     }
@@ -171,19 +181,19 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      */
     private JMenu createLookAndFeelMenu() {
         
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+        JMenu lookAndFeelMenu = new JMenu(localizator.getString("menu.view.mode"));
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
+        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(localizator.getString("menu.manage.view"));
         
-        JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+        JMenuItem systemLookAndFeel = new JMenuItem(localizator.getString("menu.sys.scheme"), KeyEvent.VK_S);
         systemLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             this.invalidate();
         });
         lookAndFeelMenu.add(systemLookAndFeel);
 
-        JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
+        JMenuItem crossplatformLookAndFeel = new JMenuItem(localizator.getString(
+                "menu.unviversal.scheme"), KeyEvent.VK_S);
         crossplatformLookAndFeel.addActionListener((event) -> {
             setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             this.invalidate();
@@ -195,14 +205,14 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Создаём TestMenu  
      */
     private JMenu createTestMenu() {
-        JMenu testMenu = new JMenu("Тесты");
+        JMenu testMenu = new JMenu( localizator.getString("menu.tests"));
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
-                "Тестовые команды");
+                localizator.getString("menu.tests.comands"));
         
-        JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+        JMenuItem addLogMessageItem = new JMenuItem(localizator.getString("menu.message.in.log"), KeyEvent.VK_S);
         addLogMessageItem.addActionListener((event) -> {
-            Logger.debug("Новая строка");
+            Logger.debug(localizator.getString("log.new.line"));
         });
         testMenu.add(addLogMessageItem);
         return testMenu;
@@ -211,10 +221,9 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Создаём exitMenu 
      */
     private JMenu exitMenuCreator() {
-    	JMenu exitMenu = new JMenu("Завершение Сессии");
-    	exitMenu.getAccessibleContext().setAccessibleDescription(
-                "Выйти");
-    	JMenuItem exitItem = new JMenuItem("Выход", KeyEvent.VK_E);
+    	JMenu exitMenu = new JMenu(localizator.getString("menu.terminate.session"));
+    	exitMenu.getAccessibleContext().setAccessibleDescription(localizator.getString("menu.gout"));
+    	JMenuItem exitItem = new JMenuItem(localizator.getString("menu.exit"), KeyEvent.VK_E);
     	exitItem.addActionListener((event) -> {
     	    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
     	        new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

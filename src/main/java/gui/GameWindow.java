@@ -1,5 +1,6 @@
 package gui;
 
+import localizator.Localizator;
 import mvc.RobotController;
 import mvc.RobotModel;
 
@@ -9,16 +10,24 @@ import java.beans.PropertyVetoException;
 
 public class GameWindow extends JInternalFrame implements PreservedWindow
 {
+    /**
+     * Локализатор
+     */
+    private final Localizator localizator = Localizator.getInstance();
+
     private final GameVisualizer gameVisualizer;
+
     private final RobotController robotController;
+
     /**
      * Конвертер для состояния окна
      */
     private final StateConverter stateConverter = new StateConverter();
+
     public GameWindow(RobotModel robotModel)
     {
-        super("Игровое поле", true, true, true, true);
-
+        super("", true, true, true, true);
+        setTitle("game.field");
         robotController = new RobotController(robotModel);
         gameVisualizer = new GameVisualizer(robotController);
         robotModel.addPropertyChangeListener(gameVisualizer);

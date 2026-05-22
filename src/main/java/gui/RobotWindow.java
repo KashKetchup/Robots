@@ -1,5 +1,6 @@
 package gui;
 
+import localizator.Localizator;
 import log.LogChangeListener;
 import log.LogWindowSource;
 import mvc.RobotData;
@@ -14,6 +15,11 @@ import java.beans.PropertyChangeListener;
  */
 public class RobotWindow extends JInternalFrame implements PreservedWindow, PropertyChangeListener {
     /**
+     * Экземпляр локализатора
+     */
+    private final static Localizator localizator = Localizator.getInstance();
+
+    /**
      * Текст с информацией
      */
     private TextArea infoContent;
@@ -26,7 +32,8 @@ public class RobotWindow extends JInternalFrame implements PreservedWindow, Prop
      * Конструктор класса
      */
     public RobotWindow() {
-        super("Актуальная информация о роботе", true, true, true, true);
+        super("", true, true, true, true);
+        setTitle(localizator.getString("robot.log.actual"));
         setName("robotWindow");
         this.infoContent = new TextArea("");
         this.infoContent.setSize(250, 150);
@@ -53,11 +60,14 @@ public class RobotWindow extends JInternalFrame implements PreservedWindow, Prop
         if(e.getNewValue() instanceof RobotData newData){
             StringBuilder content = new StringBuilder();
             RobotData old = (RobotData)e.getOldValue();
-            content.append("Координата [Х]: ").append(newData.robotX()).append("\n");
-            content.append("Координата [Y]: ").append(newData.robotY()).append("\n");
-            content.append("Направление робота: ").append(newData.robotDir()).append("\n");
-            content.append("Угол до цели: ").append(Math.atan2(newData.targY()-newData.robotY(),
-                    newData.targX()-newData.robotX()));
+            content.append(localizator.getString("robot.x.coordinate"))
+                    .append(" ").append(newData.robotX()).append("\n");
+            content.append(localizator.getString("robot.y.coordinate"))
+                    .append(" ").append(newData.robotY()).append("\n");
+            content.append(localizator.getString("robot.target"))
+                    .append(" ").append(newData.robotDir()).append("\n");
+            content.append(localizator.getString("robot.angle"))
+                    .append(" ").append(Math.atan2(newData.targY()-newData.robotY(), newData.targX()-newData.robotX()));
             infoContent.setText(content.toString());
             infoContent.invalidate();
         }

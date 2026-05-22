@@ -1,5 +1,6 @@
 package gui;
 
+import localizator.Localizator;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
@@ -9,7 +10,14 @@ import java.awt.*;
 import java.beans.PropertyVetoException;
 
 public class LogWindow extends JInternalFrame implements LogChangeListener, PreservedWindow {
+
+    /**
+     * Экземпляр локализатора
+     */
+    private final static Localizator localizator = Localizator.getInstance();
+
     private LogWindowSource logSource;
+
     private TextArea logContent;
     /**
      * Конвертер для состояния окна
@@ -17,6 +25,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Pres
     private final StateConverter stateConverter = new StateConverter();
     public LogWindow(LogWindowSource logSource) {
         super("Протокол работы", true, true, true, true);
+        setTitle(localizator.getString("log.working"));
         this.logSource = logSource;
         this.logSource.registerListener(this);
         this.logContent = new TextArea("");
