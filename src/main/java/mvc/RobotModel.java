@@ -15,6 +15,7 @@ public class RobotModel {
      * Вспомогательный класс для упрощённой регистрации и оповещения слушателей
      */
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
     /**
      * Координата робота Х
      */
@@ -29,6 +30,7 @@ public class RobotModel {
      * Направление робота
      */
     private volatile double robotDirection = 0;
+
     /**
      * Координата цели Х
      */
@@ -41,7 +43,8 @@ public class RobotModel {
      * Максимальная скорость
      */
     private static final double MAX_VELOCITY = 0.1;
-    /***
+
+    /**
      * Максимальная угловая скорость
      */
     private static final double MAX_ANGULAR_VELOCITY = 0.001;

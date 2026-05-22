@@ -24,7 +24,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Pres
      */
     private final StateConverter stateConverter = new StateConverter();
     public LogWindow(LogWindowSource logSource) {
-        super("Протокол работы", true, true, true, true);
+        super("", true, true, true, true);
         setTitle(localizator.getString("log.working"));
         this.logSource = logSource;
         this.logSource.registerListener(this);

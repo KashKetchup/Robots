@@ -5,6 +5,9 @@ import java.beans.PropertyChangeSupport;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Класс локализатор
+ */
 public class Localizator {
 
     /**
@@ -15,7 +18,7 @@ public class Localizator {
     /**
      * Имя локализации по умолчанию
      */
-    private  final String DEFAULT_LOCALE = "";
+    private  final String DEFAULT_LOCALE = "text";
 
     /**
      * Текущая локализация
@@ -25,7 +28,7 @@ public class Localizator {
     /**
      * Набор ресурсов
      */
-    private ResourceBundle resourcesBunlde;
+    private ResourceBundle resourcesBundle;
 
     /**
      * Оповещатель подписчиков
@@ -33,8 +36,8 @@ public class Localizator {
     private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
     private Localizator() {
-        resourcesBunlde = ResourceBundle.getBundle(DEFAULT_LOCALE);
-        currentLocale = Locale.of("");
+        resourcesBundle = ResourceBundle.getBundle(DEFAULT_LOCALE);
+        currentLocale = null;
     }
 
     /**
@@ -64,18 +67,22 @@ public class Localizator {
     public void changeLocale(Locale locale) {
         Locale oldLocale = currentLocale;
         currentLocale = locale;
-        resourcesBunlde = ResourceBundle.getBundle(DEFAULT_LOCALE, currentLocale);
+        resourcesBundle = ResourceBundle.getBundle(DEFAULT_LOCALE, currentLocale);
         sendData(oldLocale);
     }
 
     /**
-     * Оповестить всех о смнене локализации
+     * Оповестить всех о смене локализации
      */
     private void sendData(Locale oldLocale) {
-        changeSupport.firePropertyChange("language",
+        changeSupport.firePropertyChange("LocaleChange",
                 oldLocale, currentLocale);
     }
+
+    /**
+     * Получение строчки по ключу в соотвествии с текущей локализацией
+     */
     public String getString(String key){
-        return null;
+        return resourcesBundle.getString(key);
     }
 }

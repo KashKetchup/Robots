@@ -43,11 +43,6 @@ public class GameVisualizer extends JPanel implements PropertyChangeListener
         }
         EventQueue.invokeLater(this::repaint);
     }
-    protected void setTargetPosition(Point p)
-    {
-        controller.setTarget(p.x,p.y);
-    }
-    
 
     private static int round(double value)
     {

@@ -64,7 +64,7 @@ public class RobotWindow extends JInternalFrame implements PreservedWindow, Prop
                     .append(" ").append(newData.robotX()).append("\n");
             content.append(localizator.getString("robot.y.coordinate"))
                     .append(" ").append(newData.robotY()).append("\n");
-            content.append(localizator.getString("robot.target"))
+            content.append(localizator.getString("robot.direction"))
                     .append(" ").append(newData.robotDir()).append("\n");
             content.append(localizator.getString("robot.angle"))
                     .append(" ").append(Math.atan2(newData.targY()-newData.robotY(), newData.targX()-newData.robotX()));

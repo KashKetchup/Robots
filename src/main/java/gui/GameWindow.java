@@ -27,7 +27,7 @@ public class GameWindow extends JInternalFrame implements PreservedWindow
     public GameWindow(RobotModel robotModel)
     {
         super("", true, true, true, true);
-        setTitle("game.field");
+        setTitle(localizator.getString("game.field"));
         robotController = new RobotController(robotModel);
         gameVisualizer = new GameVisualizer(robotController);
         robotModel.addPropertyChangeListener(gameVisualizer);

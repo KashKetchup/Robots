@@ -1,5 +1,6 @@
 package mvc;
 
+import localizator.Localizator;
 import log.Logger;
 
 import java.awt.event.MouseAdapter;
@@ -15,6 +16,11 @@ public class RobotController {
      * Таймер
      */
     private final Timer timer = initTimer();
+
+    /**
+     * Экземпляр локализатора
+     */
+    private final static Localizator localizator = Localizator.getInstance();
     /**
      * Модель
      */
@@ -50,6 +56,7 @@ public class RobotController {
      public void setTarget(int x, int y){
 
          model.changeTarget(x,y);
-         Logger.sendInfo("Новая цель: x = " + Integer.toString(x) + "; y =" + Integer.toString(y));
+         Logger.sendInfo(localizator.getString("set.new.target")
+                 + " " + Integer.toString(x) + "; y =" + Integer.toString(y));
      }
 }

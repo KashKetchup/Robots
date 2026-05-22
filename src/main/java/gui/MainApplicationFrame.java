@@ -3,6 +3,7 @@ package gui;
 import localizator.Localizator;
 import log.Logger;
 import mvc.RobotController;
+import mvc.RobotData;
 import mvc.RobotModel;
 
 import javax.swing.*;
@@ -10,11 +11,13 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-public class MainApplicationFrame extends JFrame implements PreservedWindow
+public class MainApplicationFrame extends JFrame implements PreservedWindow, PropertyChangeListener
 {
     /**
      * Экземпляр локализатора
@@ -42,6 +45,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
     public MainApplicationFrame() throws IOException {
     	setScreenSize();
         LogWindow logWindow = createLogWindow();
+        localizator.addPropertyChangeListener(this);
         RobotWindow robotWindow = new RobotWindow();
         RobotModel robotModel = new RobotModel();
         robotModel.addPropertyChangeListener(robotWindow);
@@ -104,8 +108,8 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
      * Устанавливаем новый текст для кнопок YES/NO
      */
     private void setRusButtons(){
-        UIManager.put("OptionPane.yesButtonText",localizator.getString("button.yes"));
-        UIManager.put("OptionPane.noButtonText",localizator.getString("button.no"));
+        UIManager.put("OptionPane.yesButtonText",localizator.getString("button.confrim"));
+        UIManager.put("OptionPane.noButtonText",localizator.getString("button.reject"));
     }
 
     /**
@@ -153,7 +157,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug(localizator.getString("log.isworking"));
+        Logger.debug(localizator.getString("log.working"));
 
         return logWindow;
     }
@@ -173,6 +177,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createLookAndFeelMenu());
         menuBar.add(createTestMenu());
+        menuBar.add(createLocaleMenu());
         menuBar.add(exitMenuCreator());
         return menuBar;
     }
@@ -216,6 +221,30 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
         });
         testMenu.add(addLogMessageItem);
         return testMenu;
+    }
+    /**
+     * Создаём меню для смены локализации
+     */
+    private JMenu createLocaleMenu() {
+        JMenu localeMenu = new JMenu( localizator.getString("menu.locales"));
+        localeMenu.setMnemonic(KeyEvent.VK_G);
+        localeMenu.getAccessibleContext().setAccessibleDescription(
+                localizator.getString("menu.locales.info"));
+
+        JMenuItem addLocaleItem = new JMenuItem(localizator.getString("menu.locales.ru"), KeyEvent.VK_R);
+        addLocaleItem.addActionListener((event) -> {
+            Locale locale = Locale.of("ru","RU");
+            localizator.changeLocale(locale);
+        });
+
+        JMenuItem addSecLocaleItem = new JMenuItem(localizator.getString("menu.locales.en"), KeyEvent.VK_E);
+        addSecLocaleItem.addActionListener((event) -> {
+            Locale locale = Locale.of("en","US");
+            localizator.changeLocale(locale);
+        });
+        localeMenu.add(addLocaleItem);
+        localeMenu.add(addSecLocaleItem);
+        return localeMenu;
     }
     /**
      * Создаём exitMenu 
@@ -264,6 +293,36 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow
             this.setExtendedState(JFrame.ICONIFIED);
         } else {
             this.setExtendedState(JFrame.NORMAL);
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(evt.getPropertyName().equals("LocaleChange")){
+            this.getContentPane().removeAll();
+            setScreenSize();
+            LogWindow logWindow = createLogWindow();
+            RobotWindow robotWindow = new RobotWindow();
+            RobotModel robotModel = new RobotModel();
+            robotModel.addPropertyChangeListener(robotWindow);
+            addWindow(robotWindow);
+            addWindow(logWindow);
+            logWindow.setName("logWindow");
+            GameWindow gameWindow = new GameWindow(robotModel);
+            gameWindow.setSize(400,  400);
+            gameWindow.setName("gameWindow");
+            addWindow(gameWindow);
+            this.setName("mainFrame");
+            setRusButtons();
+            readWindows();
+            setJMenuBar(generateMenuBar());
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            readStates();
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    confrimDialog();
+                }
+            });
         }
     }
 }
