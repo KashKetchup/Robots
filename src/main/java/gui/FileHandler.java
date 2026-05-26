@@ -1,5 +1,7 @@
 package gui;
 
+import localizator.Localizator;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,20 +13,32 @@ import java.util.regex.Pattern;
  * Класс для записи в файл и чтения из него
  */
 public class FileHandler {
+
+    /**
+     * Экземпляр локализатора
+     */
+    private final static Localizator instance = Localizator.getInstance();
+
     /**
      * Директория для конфигурационного файла
      */
     private final String dir = System.getProperty("user.home") + "/nedoshopa";
+
     /**
      * Паттерн для чисел
      */
     private final Pattern windowPattern = Pattern.compile(
             "(\\D+) (-?\\d+) (-?\\d+) (-?\\d+) (-?\\d+) (-?\\d+)");
+    /**
+     * Паттерн для чисел
+     */
+    private final Pattern localePattern = Pattern.compile(
+            "([a-z]+)_([A-Z]+)");
 
     /**
      * Записать состояния в файл
      */
-    public void writeWindowStates(Collection<PreservedWindow> windows) {
+    public void writeWindowStates(Collection<PreservedWindow> windows, String currentLocale) {
         File file = new File(dir);
         if (!file.exists()) {
             try {
@@ -39,6 +53,7 @@ public class FileHandler {
             for (PreservedWindow state : windows) {
                 writer.write(convertWindowState(state.saveCurrentState()) + "\n");
             }
+            writer.write(currentLocale+"\n");
             writer.flush();
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -58,11 +73,18 @@ public class FileHandler {
                 if (file.exists()) {
                         String in = bufferedReader.readLine();
                         while (in != null) {
-                            Matcher m = windowPattern.matcher(in);
-                            if(m.find()){
-                                result.add(new LastWindowState(m.group(1),toInt(m.group(2)),
-                                        toInt(m.group(3)),toInt(m.group(4)),toInt(m.group(5)),
-                                        m.group(6).equals("1") ? true : false ));
+                            Matcher windowMatcher = windowPattern.matcher(in);
+                            if(windowMatcher.find()){
+                                result.add(new LastWindowState(windowMatcher.group(1),toInt(windowMatcher.group(2)),
+                                        toInt(windowMatcher.group(3)),toInt(windowMatcher.group(4)),toInt(windowMatcher.group(5)),
+                                        windowMatcher.group(6).equals("1") ? true : false ));
+                            } else {
+                                Matcher localeMatcher = localePattern.matcher(in);
+                                if(localeMatcher.find()){
+                                    Locale old_locale = Locale.of(localeMatcher.group(1),localeMatcher.group(2));
+                                    //System.out.println(localeMatcher.group(1)+" "+localeMatcher.group(2));
+                                    instance.changeLocale(old_locale);
+                                }
                             }
                             in = bufferedReader.readLine();
                         }

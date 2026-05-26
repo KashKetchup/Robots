@@ -20,7 +20,8 @@ public class RobotsProgram
       SwingUtilities.invokeLater(() -> {
           MainApplicationFrame frame = null;
           try {
-              frame = new MainApplicationFrame();
+              FileHandler fileHandler = new FileHandler();
+              frame = new MainApplicationFrame(fileHandler);
           } catch (IOException e) {
               throw new RuntimeException(e);
           }

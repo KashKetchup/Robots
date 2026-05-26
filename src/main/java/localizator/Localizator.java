@@ -2,13 +2,20 @@ package localizator;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
  * Класс локализатор
  */
 public class Localizator {
+    /**
+     * Кэш для хранения шаблонов
+     */
+    private final Map<Locale, Map<String, MessageFormat>> globalCache = new HashMap<>();
 
     /**
      * Экземпляр локализатора
@@ -70,7 +77,12 @@ public class Localizator {
         resourcesBundle = ResourceBundle.getBundle(DEFAULT_LOCALE, currentLocale);
         sendData(oldLocale);
     }
-
+    public String getLocaleName(){
+        if(currentLocale != null){
+        return currentLocale.toString();
+        }
+        return "default";
+    }
     /**
      * Оповестить всех о смене локализации
      */
@@ -83,6 +95,16 @@ public class Localizator {
      * Получение строчки по ключу в соотвествии с текущей локализацией
      */
     public String getString(String key){
-        return resourcesBundle.getString(key);
+        Map<String, MessageFormat> localeCache = globalCache.get(currentLocale);
+        if (localeCache == null) {
+            localeCache = new HashMap<String, MessageFormat>();
+            globalCache.put(currentLocale, localeCache);
+        }
+        MessageFormat messageFormat = localeCache.get(key);
+        if (messageFormat == null) {
+            messageFormat = new MessageFormat(resourcesBundle.getString(key));
+            localeCache.put(key, messageFormat);
+        }
+        return messageFormat.format(null);
     }
 }

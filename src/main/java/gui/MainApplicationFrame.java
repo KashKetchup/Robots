@@ -32,7 +32,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
     /**
      * Класс для чтения/записи состояний
      */
-    private final FileHandler fileHandler = new FileHandler();
+    private final FileHandler fileHandler;
 
     /**
      * Главная панель
@@ -42,8 +42,9 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
     /**
      * Конструктор класса
      */
-    public MainApplicationFrame() throws IOException {
-    	setScreenSize();
+    public MainApplicationFrame(FileHandler newFileHandler ) throws IOException {
+    	fileHandler = newFileHandler;
+        setScreenSize();
         LogWindow logWindow = createLogWindow();
         localizator.addPropertyChangeListener(this);
         RobotWindow robotWindow = new RobotWindow();
@@ -102,7 +103,8 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
      * Записать состояния в файл
      */
     private void recordStates(){
-        fileHandler.writeWindowStates(preservedWindows.values());
+
+        fileHandler.writeWindowStates(preservedWindows.values(),localizator.getLocaleName());
     }
     /**
      * Устанавливаем новый текст для кнопок YES/NO
@@ -231,15 +233,15 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
         localeMenu.getAccessibleContext().setAccessibleDescription(
                 localizator.getString("menu.locales.info"));
 
-        JMenuItem addLocaleItem = new JMenuItem(localizator.getString("menu.locales.ru"), KeyEvent.VK_R);
-        addLocaleItem.addActionListener((event) -> {
-            Locale locale = Locale.of("ru","RU");
-            localizator.changeLocale(locale);
-        });
-
         JMenuItem addSecLocaleItem = new JMenuItem(localizator.getString("menu.locales.en"), KeyEvent.VK_E);
         addSecLocaleItem.addActionListener((event) -> {
             Locale locale = Locale.of("en","US");
+            localizator.changeLocale(locale);
+        });
+
+        JMenuItem addLocaleItem = new JMenuItem(localizator.getString("menu.locales.ru"), KeyEvent.VK_R);
+        addLocaleItem.addActionListener((event) -> {
+            Locale locale = Locale.of("ru","RU");
             localizator.changeLocale(locale);
         });
         localeMenu.add(addLocaleItem);
@@ -299,6 +301,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if(evt.getPropertyName().equals("LocaleChange")){
+            recordStates();
             this.getContentPane().removeAll();
             setScreenSize();
             LogWindow logWindow = createLogWindow();
