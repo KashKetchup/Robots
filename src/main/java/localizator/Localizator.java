@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
  * Класс локализатор
  */
 public class Localizator {
+
     /**
      * Кэш для хранения шаблонов
      */
@@ -25,7 +26,7 @@ public class Localizator {
     /**
      * Имя локализации по умолчанию
      */
-    private  final String DEFAULT_LOCALE = "text";
+    private final String DEFAULT_LOCALE = "text";
 
     /**
      * Текущая локализация
@@ -42,6 +43,9 @@ public class Localizator {
      */
     private final PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
+    /**
+     * Приватный конструктор
+     */
     private Localizator() {
         resourcesBundle = ResourceBundle.getBundle(DEFAULT_LOCALE);
         currentLocale = null;
@@ -77,12 +81,17 @@ public class Localizator {
         resourcesBundle = ResourceBundle.getBundle(DEFAULT_LOCALE, currentLocale);
         sendData(oldLocale);
     }
+
+    /**
+     * Получение имени текущей Локализации
+     */
     public String getLocaleName(){
         if(currentLocale != null){
         return currentLocale.toString();
         }
         return "default";
     }
+
     /**
      * Оповестить всех о смене локализации
      */

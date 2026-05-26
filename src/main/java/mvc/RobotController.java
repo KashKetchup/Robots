@@ -21,10 +21,12 @@ public class RobotController {
      * Экземпляр локализатора
      */
     private final static Localizator localizator = Localizator.getInstance();
+
     /**
      * Модель
      */
     private final RobotModel model;
+
     /**
      * Инициализируем таймер
      */

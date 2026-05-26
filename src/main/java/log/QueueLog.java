@@ -133,6 +133,7 @@ public class QueueLog implements Iterable<LogEntry> {
             }
         };
     }
+
     /**
      * Класс узлов очереди
      */

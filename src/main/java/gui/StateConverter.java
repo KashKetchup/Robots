@@ -7,6 +7,7 @@ import java.beans.PropertyVetoException;
  * Класс для загрузки и сохранения состояния окна
  */
 public class StateConverter {
+
     /**
      *Сохранение состояние окна
      */

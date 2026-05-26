@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-public class MainApplicationFrame extends JFrame implements PreservedWindow, PropertyChangeListener
-{
+public class MainApplicationFrame extends JFrame implements PreservedWindow, PropertyChangeListener {
+
     /**
      * Экземпляр локализатора
      */
@@ -82,6 +82,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
         }
         preservedWindows.put(this.getName(), this);
     }
+
     /**
      * Считать состояния из файла
      */
@@ -106,6 +107,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
 
         fileHandler.writeWindowStates(preservedWindows.values(),localizator.getLocaleName());
     }
+
     /**
      * Устанавливаем новый текст для кнопок YES/NO
      */
@@ -149,6 +151,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
             screenSize.height - inset*2);
         setContentPane(desktopPane);
     }
+
     /**
      * Функция создания нового окна для Логов
      */
@@ -163,6 +166,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
 
         return logWindow;
     }
+
     /**
      * Функция добавления нового фрейма к desktopPane
      */
@@ -208,6 +212,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
         lookAndFeelMenu.add(crossplatformLookAndFeel);
         return lookAndFeelMenu;
     }
+
     /**
      * Создаём TestMenu  
      */
@@ -224,6 +229,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
         testMenu.add(addLogMessageItem);
         return testMenu;
     }
+
     /**
      * Создаём меню для смены локализации
      */
@@ -248,6 +254,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
         localeMenu.add(addSecLocaleItem);
         return localeMenu;
     }
+
     /**
      * Создаём exitMenu 
      */
@@ -262,6 +269,7 @@ public class MainApplicationFrame extends JFrame implements PreservedWindow, Pro
     	exitMenu.add(exitItem);
     	return exitMenu;
     }
+
     /**
      * Устанавливаем внешний вид приложения 
      */

@@ -19,6 +19,7 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Pres
     private LogWindowSource logSource;
 
     private TextArea logContent;
+
     /**
      * Конвертер для состояния окна
      */

@@ -14,6 +14,7 @@ import java.beans.PropertyChangeListener;
  * Класс окна с информацией о роботе
  */
 public class RobotWindow extends JInternalFrame implements PreservedWindow, PropertyChangeListener {
+
     /**
      * Экземпляр локализатора
      */
